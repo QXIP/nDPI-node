@@ -1,6 +1,6 @@
-/*  nDPI Node.js Binding PoC 	*/
-/*  (c) 2015 QXIP BV 		*/
-/*  http://qxip.net 		*/
+/*  nDPI Node.js Binding PoC 		*/
+/*  (c) 2015 L. Mangani, QXIP BV 	*/
+/*  http://qxip.net 			*/
 
 var VERSION = "0.1.2";
 
@@ -11,7 +11,7 @@ var ref = require("ref");
 var Struct = require('ref-struct');
 var ArrayType = require('ref-array');
 
-/* PCAP Filter */
+/* CLI Arguments */
 
 if (process.argv.length > 4) {
     console.error("usage: tcp_metrics interface filter");
@@ -21,6 +21,9 @@ if (process.argv.length > 4) {
     console.error("  tcp_metrics lo0 \"ip proto \\tcp and tcp port 80\"");
     process.exit(1);
 }
+
+/* PCAP Parser */
+
 var pcapp = require('pcap-parser');
 var pcap_parser = pcapp.parse('./pcap/lamernews.pcap');
 
@@ -50,7 +53,6 @@ var callback = exports.callback = ffi.Function(ref.types.void, [
 var callbackPtr = exports.callbackPtr = ref.refType(callback);
 
 var ndpi = new ffi.Library('./libndpilua.so', {
-
   init: [ref.types.void, [
   ]],
   setDatalinkType: [ref.types.void, [
@@ -67,7 +69,7 @@ var ndpi = new ffi.Library('./libndpilua.so', {
   ]],
 });
 
-// PCAP Header
+/* PCAP Header  */
 var pcap_pkthdr = Struct({
   'ts_sec': 'uint64', 
   'ts_usec': 'uint64',
@@ -76,18 +78,6 @@ var pcap_pkthdr = Struct({
 });
 
 var pcap_pkthdr_ptr = ref.refType(pcap_pkthdr);
-
-/*
-var ndpi = ffi.Library('./libndpilua.so', {
-  "init": [ "void", [] ],
-  "finish": [ "void", [] ],
-//  "processPacket": [ "void", [ pcap_pkthdr_ptr, ucharPtr ] ],
-  "processPacket": [ "void", [ ref.refType(pcap_pkthdr), ref.refType(ref.types.uchar) ] ],
-  "addProtocolHandler": [ "void", [ callback_Ptr ] ],
-  "setDatalinkType": [ "void", [ "pointer"] ]
-});
-
-*/
 
 /* APP VARS */
 
@@ -102,7 +92,6 @@ function onProto(id, packet) {
 /* APP */
 
 console.log("nDPI Node v"+VERSION);
-	//console.log("Test L7 Proto-2-Name :", L7PROTO[5] );
 
 /* NDPI LOOP */
 
@@ -135,7 +124,6 @@ pcap_parser.on('packet', function (raw_packet) {
 });
 
 pcap_parser.on('end', function () {
-	// console.log('EOF!');
 	ndpi.finish();
 });
 
@@ -151,7 +139,6 @@ process.on('SIGINT', function() {
     	console.log("Press CTRL-C within 2 seconds to Exit...");
         exit = true;
 	setTimeout(function () {
-    	  // console.log("Continuing...");
 	  exit = false;
 	}, 2000)
     }
