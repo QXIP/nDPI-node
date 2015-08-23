@@ -11,21 +11,16 @@ var ref = require("ref");
 var Struct = require('ref-struct');
 var ArrayType = require('ref-array');
 
-/* CLI Arguments */
-
-if (process.argv.length > 4) {
-    console.error("usage: tcp_metrics interface filter");
-    console.error("Examples: ");
-    console.error("  tcp_metrics \"tcp port 80\"");
-    console.error("  tcp_metrics eth1 \"\"");
-    console.error("  tcp_metrics lo0 \"ip proto \\tcp and tcp port 80\"");
-    process.exit(1);
-}
-
 /* PCAP Parser */
 
 var pcapp = require('pcap-parser');
-var pcap_parser = pcapp.parse('./pcap/lamernews.pcap');
+if (process.argv[2]) {
+	var pcap_parser = pcapp.parse(process.argv[2]);
+} else {
+    console.error("usage: node pcap.js /path/to/file.pcap");
+    console.error();
+    process.exit();
+}
 
 /* NDPI CALLBACK */
 

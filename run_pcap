@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd src
-node pcap.js
+node pcap.js ./pcap/lamernews.pcap
