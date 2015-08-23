@@ -111,7 +111,6 @@ ndpi.init();
 /* PCAP LOOP */
 
 pcap_parser.on('globalHeader', function (globalHeader) {
-	console.log('START!');
 	ndpi.init();
 	// ndpi.addProtocolHandler(onProto);
 	var ltype = new Buffer(globalHeader.linkLayerType);
@@ -136,7 +135,7 @@ pcap_parser.on('packet', function (raw_packet) {
 });
 
 pcap_parser.on('end', function () {
-	console.log('EOF!');
+	// console.log('EOF!');
 	ndpi.finish();
 });
 
